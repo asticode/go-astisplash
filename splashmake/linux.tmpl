@@ -1,0 +1,18 @@
+package astisplash
+
+import (
+	"path/filepath"
+
+	"github.com/pkg/errors"
+)
+
+// disembedAssets disembeds assets for Linux
+func disembedAssets(directoryPath string) (binaryPath string, err error) {
+	// Disembed binary
+	binaryPath = filepath.Join(directoryPath, "astisplash")
+	if err = disembedAsset([]byte("{{ .Binary }}"), binaryPath); err != nil {
+		err = errors.Wrapf(err, "disembedding to %s failed", binaryPath)
+		return
+	}
+	return
+}
