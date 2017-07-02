@@ -2,6 +2,7 @@ package astisplash
 
 import (
 	"os/exec"
+	"syscall"
 
 	"github.com/pkg/errors"
 )
@@ -14,8 +15,8 @@ type Splash struct {
 // Close closes the splash screen properly
 func (s *Splash) Close() (err error) {
 	if s.cmd != nil && s.cmd.Process != nil {
-		if err = s.cmd.Process.Kill(); err != nil {
-			err = errors.Wrapf(err, "killing process %d failed", s.cmd.Process.Pid)
+		if err = s.cmd.Process.Signal(syscall.SIGINT); err != nil {
+			err = errors.Wrapf(err, "sending SIGINT to process %d failed", s.cmd.Process.Pid)
 			return
 		}
 	}

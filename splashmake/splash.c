@@ -3,11 +3,16 @@
 
 int width, height, x, y, isCentered;
 char *imagePath;
+GtkApplication *app;
+GtkWidget *window;
+
+void signal_handler(int signum)
+{
+   exit(signum);
+}
 
 static void activate (GtkApplication* app, gpointer user_data)
 {
-    GtkWidget *window;
-
     window = gtk_application_window_new (app);
     gtk_window_set_title (GTK_WINDOW (window), "Window");
     gtk_window_set_decorated(GTK_WINDOW (window), 0); // Frameless window
@@ -29,6 +34,9 @@ static void activate (GtkApplication* app, gpointer user_data)
 
 int main (int argc, char **argv)
 {
+    // Register signal and signal handler
+    signal(SIGINT, signal_handler);
+
     // Parse flags
     while ((argc > 1) && (argv[1][0] == '-'))
     {
@@ -58,7 +66,6 @@ int main (int argc, char **argv)
     }
 
     // Build application
-    GtkApplication *app;
     int status;
 
     app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
