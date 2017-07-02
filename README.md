@@ -18,7 +18,7 @@ s, _ := astisplash.New()
 defer s.Close()
 
 // Splash
-sp, _ := s.Splash("/path/to/your/image.png")
+sp, _ := s.Splash("/path/to/your/image.png", 160, 90)
 
 // Sleep
 time.Sleep(2 * time.Second)
@@ -26,6 +26,12 @@ time.Sleep(2 * time.Second)
 // Close the splash
 sp.Close()
 ```
+
+# Example
+
+Run the following command to see the example:
+
+    $ go run example/main.go -v
 
 # Developments
 

@@ -1,43 +1,67 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
-int width, height, x, y, isCentered;
-char *imagePath, *title;
-GtkApplication *app;
-GtkWidget *window;
+// Global vars
+int width, height;
+char *icon, *background, *title;
 
+// Signal handler
 void signal_handler(int signum)
 {
    exit(signum);
 }
 
+// GTK activate callback
 static void activate (GtkApplication* app, gpointer user_data)
 {
-    window = gtk_application_window_new (app);
+    // Build window
+    GtkWidget *window = gtk_application_window_new (app);
+
+    // Window is frameless
+    gtk_window_set_decorated(GTK_WINDOW (window), 0);
+
+    // Center window
+    gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
+
+    // Add title
     if (title == NULL) {
         title = "Window";
     }
     gtk_window_set_title (GTK_WINDOW (window), title);
-    gtk_window_set_decorated(GTK_WINDOW (window), 0); // Frameless window
-    if (isCentered == 1) {
-        gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
-    } else {
-        gtk_window_move(GTK_WINDOW (window), x, y);
-    }
-    GtkWidget *image = gtk_image_new_from_file(imagePath);
+
+    // Resize
     if (width > 0 && height > 0) {
         gtk_window_set_default_size (GTK_WINDOW (window), width, height);
-        GdkPixbuf *pixbuf =	gtk_image_get_pixbuf(GTK_IMAGE(image));
-        pixbuf = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
-        gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
     }
-    gtk_container_add (GTK_CONTAINER (window), image);
+
+    // Build layout
+    GtkWidget *layout = gtk_layout_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER (window), layout);
+    gtk_widget_show(layout);
+
+    // Add background to the layout
+    GtkWidget *image = gtk_image_new_from_file(background);
+    gtk_layout_put(GTK_LAYOUT(layout), image, 0, 0);
+
+    // Add spinner
+    GtkWidget *spinner = gtk_spinner_new ();
+    gtk_spinner_start (GTK_SPINNER (spinner));
+    gtk_layout_put(GTK_LAYOUT(layout), spinner,  0, 0);
+
+    // Show window
     gtk_widget_show_all (window);
+
+    // Move spinner
+    GtkAllocation* alloc = g_new(GtkAllocation, 1);
+    gtk_widget_get_allocation(spinner, alloc);
+    gtk_layout_move(layout, spinner, width/2-alloc->width/2, height/2-alloc->height/2+30);
+    g_free(alloc);
 }
 
+// Main
 int main (int argc, char **argv)
 {
-    // Register signal and signal handler
+    // Register signal handler
     signal(SIGINT, signal_handler);
 
     // Parse flags
@@ -45,14 +69,14 @@ int main (int argc, char **argv)
     {
         switch (argv[1][1])
         {
-            case 'c':
-                isCentered = 1;
+            case 'b':
+                background = &argv[1][2];
                 break;
             case 'h':
                 height = atoi(&argv[1][2]);
                 break;
             case 'i':
-                imagePath = &argv[1][2];
+                icon = &argv[1][2];
                 break;
             case 't':
                 title = &argv[1][2];
@@ -60,24 +84,17 @@ int main (int argc, char **argv)
             case 'w':
                 width = atoi(&argv[1][2]);
                 break;
-            case 'x':
-                x = atoi(&argv[1][2]);
-                break;
-            case 'y':
-                y = atoi(&argv[1][2]);
-                break;
         }
         ++argv;
         --argc;
     }
 
     // Build application
+    GtkApplication *app;
     int status;
-
-    app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
+    app = gtk_application_new ("org.asticode.astisplash", G_APPLICATION_FLAGS_NONE);
     g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
     status = g_application_run (G_APPLICATION (app), argc, argv);
     g_object_unref (app);
-
     return status;
 }
