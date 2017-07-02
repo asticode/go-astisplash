@@ -26,7 +26,7 @@ func main() {
 	// Splash
 	astilog.Debug("Splashing...")
 	var sp *astisplash.Splash
-	if sp, err = s.Splash("./example/splash.png", 484, 316); err != nil {
+	if sp, err = s.Splash("./example/splash.png"); err != nil {
 		astilog.Fatal(errors.Wrap(err, "splashing failed"))
 	}
 	defer sp.Close()

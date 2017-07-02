@@ -12,47 +12,48 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DataLinux represents linux template data
-type DataLinux struct {
+// DataWindows represents windows template data
+type DataWindows struct {
 	Binary string
+	DLL    string
 }
 
-// makeLinux makes all proper steps for Linux
-func makeLinux() (err error) {
+// makeWindows makes all proper steps for Windows
+func makeWindows() (err error) {
 	// Build
-	var d DataLinux
-	if d, err = buildLinux(); err != nil {
-		err = errors.Wrap(err, "building for linux failed")
+	var d DataWindows
+	if d, err = buildWindows(); err != nil {
+		err = errors.Wrap(err, "building for windows failed")
 		return
 	}
 
 	// Execute template
-	if err = executeTemplate(d, "/linux.tmpl", "./asset_linux.go"); err != nil {
+	if err = executeTemplate(d, "/windows.tmpl", "./asset_windows.go"); err != nil {
 		err = errors.Wrap(err, "executing template failed")
 		return
 	}
 	return
 }
 
-// buildLinux builds the linux binary and returns the linux data
-func buildLinux() (d DataLinux, err error) {
+// buildWindows builds the windows binary and returns the windows data
+func buildWindows() (d DataWindows, err error) {
 	// Update args
-	var args = []string{"-o", "./splashmake/tmp/linux", "./splashmake/linux.c"}
+	var args = []string{"-o", "./splashmake/tmp/windows", "./splashmake/splash.c"}
 
 	// Retrieve pkg-config
 	astilog.Debug("Retrieving pkg-config")
 	var cmd = exec.Command("pkg-config", "--cflags", "--libs", "gtk+-3.0")
+	cmd.Env = append([]string{"PKG_CONFIG_PATH=/mnt/hgfs/shared/mingw32/lib/pkgconfig/"}, os.Environ()...)
 	var b []byte
 	if b, err = cmd.CombinedOutput(); err != nil {
-		err = errors.Wrap(err, "retrieving pkg-config failed")
+		err = errors.Wrapf(err, "retrieving pkg-config failed with body %s", b)
 		return
 	}
 	args = append(args, strings.Split(string(bytes.TrimSpace(b)), " ")...)
 
 	// Build
 	astilog.Debug("Building")
-	cmd = exec.Command("gcc", args...)
-	cmd.Env = os.Environ()
+	cmd = exec.Command("i686-w64-mingw32-gcc", args...)
 	if b, err = cmd.CombinedOutput(); err != nil {
 		err = errors.Wrapf(err, "executing %s failed with output %s", strings.Join(cmd.Args, " "), b)
 		return
@@ -60,8 +61,8 @@ func buildLinux() (d DataLinux, err error) {
 
 	// Read file
 	astilog.Debug("Reading linux binary")
-	if b, err = ioutil.ReadFile("./splashmake/tmp/linux"); err != nil {
-		err = errors.Wrap(err, "reading \"./splashmake/tmp/linux\" failed")
+	if b, err = ioutil.ReadFile("./splashmake/tmp/windows"); err != nil {
+		err = errors.Wrap(err, "reading \"./splashmake/tmp/windows\" failed")
 		return
 	}
 

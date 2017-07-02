@@ -6,8 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"strconv"
-
 	"github.com/asticode/go-astilog"
 	"github.com/pkg/errors"
 )
@@ -54,12 +52,8 @@ func (s *Splasher) Close() (err error) {
 }
 
 // Splash displays a splash screen
-func (s *Splasher) Splash(backgroundPath string, width, height int) (*Splash, error) {
-	return s.splash(exec.Command(s.binaryPath,
-		"-b"+backgroundPath,
-		"-h"+strconv.Itoa(height),
-		"-w"+strconv.Itoa(width),
-	))
+func (s *Splasher) Splash(src string) (*Splash, error) {
+	return s.splash(exec.Command(s.binaryPath, "-b"+src))
 }
 
 // Splash displays a splash screen at a specific position of the screen
