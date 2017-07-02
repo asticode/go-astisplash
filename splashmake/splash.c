@@ -54,7 +54,7 @@ static void activate (GtkApplication* app, gpointer user_data)
     // Move spinner
     GtkAllocation* alloc = g_new(GtkAllocation, 1);
     gtk_widget_get_allocation(spinner, alloc);
-    gtk_layout_move(layout, spinner, width/2-alloc->width/2, height/2-alloc->height/2+30);
+    gtk_layout_move(GTK_LAYOUT(layout), GTK_WIDGET (spinner), width/2-alloc->width/2, height/2-alloc->height/2+30);
     g_free(alloc);
 }
 

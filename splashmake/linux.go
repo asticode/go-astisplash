@@ -36,35 +36,23 @@ func makeLinux() (err error) {
 
 // buildLinux builds the linux binary and returns the linux data
 func buildLinux() (d DataLinux, err error) {
-	// Retrieve cflags
-	var args = []string{}
-	astilog.Debug("Retrieving cflags")
-	var cmd = exec.Command("pkg-config", "--cflags", "gtk+-3.0")
-	var cflags []byte
-	if cflags, err = cmd.CombinedOutput(); err != nil {
-		err = errors.Wrap(err, "retrieving cflags failed")
-		return
-	}
-	args = append(args, strings.Split(string(bytes.TrimSpace(cflags)), " ")...)
-
 	// Update args
-	args = append(args, "-o", "./splashmake/tmp/linux", "./splashmake/splash.c")
+	var args = []string{"-o", "./splashmake/tmp/linux", "./splashmake/splash.c"}
 
-	// Retrieve libs
-	astilog.Debug("Retrieving libs")
-	cmd = exec.Command("pkg-config", "--libs", "gtk+-3.0")
-	var libs []byte
-	if libs, err = cmd.CombinedOutput(); err != nil {
-		err = errors.Wrap(err, "retrieving libs failed")
+	// Retrieve pkg-config
+	astilog.Debug("Retrieving pkg-config")
+	var cmd = exec.Command("pkg-config", "--cflags", "--libs", "gtk+-3.0")
+	var b []byte
+	if b, err = cmd.CombinedOutput(); err != nil {
+		err = errors.Wrap(err, "retrieving pkg-config failed")
 		return
 	}
-	args = append(args, strings.Split(string(bytes.TrimSpace(libs)), " ")...)
+	args = append(args, strings.Split(string(bytes.TrimSpace(b)), " ")...)
 
 	// Build
 	astilog.Debug("Building")
 	cmd = exec.Command("gcc", args...)
 	cmd.Env = os.Environ()
-	var b []byte
 	if b, err = cmd.CombinedOutput(); err != nil {
 		err = errors.Wrapf(err, "executing %s failed with output %s", strings.Join(cmd.Args, " "), b)
 		return
