@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int width, height, x, y, isCentered;
-char *imagePath;
+char *imagePath, *title;
 GtkApplication *app;
 GtkWidget *window;
 
@@ -14,7 +14,10 @@ void signal_handler(int signum)
 static void activate (GtkApplication* app, gpointer user_data)
 {
     window = gtk_application_window_new (app);
-    gtk_window_set_title (GTK_WINDOW (window), "Window");
+    if (title == NULL) {
+        title = "Window";
+    }
+    gtk_window_set_title (GTK_WINDOW (window), title);
     gtk_window_set_decorated(GTK_WINDOW (window), 0); // Frameless window
     if (isCentered == 1) {
         gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
@@ -50,6 +53,9 @@ int main (int argc, char **argv)
                 break;
             case 'i':
                 imagePath = &argv[1][2];
+                break;
+            case 't':
+                title = &argv[1][2];
                 break;
             case 'w':
                 width = atoi(&argv[1][2]);
