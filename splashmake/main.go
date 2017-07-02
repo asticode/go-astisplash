@@ -41,7 +41,6 @@ func makeAll() (err error) {
 		err = errors.Wrap(err, "making for linux failed")
 		return
 	}
-	return
 
 	// Windows
 	astilog.Debug("Making for Windows")

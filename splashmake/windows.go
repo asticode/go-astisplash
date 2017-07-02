@@ -37,23 +37,11 @@ func makeWindows() (err error) {
 
 // buildWindows builds the windows binary and returns the windows data
 func buildWindows() (d DataWindows, err error) {
-	// Update args
-	var args = []string{"-o", "./splashmake/tmp/windows", "./splashmake/splash.c"}
-
-	// Retrieve pkg-config
-	astilog.Debug("Retrieving pkg-config")
-	var cmd = exec.Command("pkg-config", "--cflags", "--libs", "gtk+-3.0")
-	cmd.Env = append([]string{"PKG_CONFIG_PATH=/mnt/hgfs/shared/mingw32/lib/pkgconfig/"}, os.Environ()...)
-	var b []byte
-	if b, err = cmd.CombinedOutput(); err != nil {
-		err = errors.Wrapf(err, "retrieving pkg-config failed with body %s", b)
-		return
-	}
-	args = append(args, strings.Split(string(bytes.TrimSpace(b)), " ")...)
-
 	// Build
 	astilog.Debug("Building")
-	cmd = exec.Command("i686-w64-mingw32-gcc", args...)
+	var cmd = exec.Command("i686-w64-mingw32-gcc", "-o", "./splashmake/tmp/windows", "./splashmake/windows.c")
+	cmd.Env = os.Environ()
+	var b []byte
 	if b, err = cmd.CombinedOutput(); err != nil {
 		err = errors.Wrapf(err, "executing %s failed with output %s", strings.Join(cmd.Args, " "), b)
 		return
