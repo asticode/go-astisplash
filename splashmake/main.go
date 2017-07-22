@@ -2,11 +2,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 	"text/template"
 
-	"os"
-
 	"github.com/asticode/go-astilog"
+	"github.com/asticode/go-astitools/flag"
 	"github.com/asticode/go-astitools/template"
 	"github.com/pkg/errors"
 )
@@ -14,10 +15,24 @@ import (
 // Vars
 var t *template.Template
 
+// Flags
+var (
+	oses = astiflag.Strings{}
+)
+
 func main() {
 	// Parse flags
+	flag.Var(&oses, "os", "one of the OS the making will be done for")
 	flag.Parse()
-	astilog.SetLogger(astilog.New(astilog.FlagConfig()))
+	astilog.FlagInit()
+
+	// Default oses
+	if len(oses) == 0 {
+		oses = astiflag.Strings{
+			"linux",
+			"windows",
+		}
+	}
 
 	// Load templates
 	astilog.Debug("Loading templates")
@@ -28,25 +43,27 @@ func main() {
 
 	// Make
 	astilog.Debug("Making")
-	if err = makeAll(); err != nil {
+	if err = makeAll(oses...); err != nil {
 		astilog.Fatal(errors.Wrap(err, "building failed"))
 	}
 }
 
 // makeAll makes all proper steps for all OSes
-func makeAll() (err error) {
-	// Linux
-	astilog.Debug("Making for Linux")
-	if err = makeLinux(); err != nil {
-		err = errors.Wrap(err, "making for linux failed")
-		return
-	}
-
-	// Windows
-	astilog.Debug("Making for Windows")
-	if err = makeWindows(); err != nil {
-		err = errors.Wrap(err, "making for windows failed")
-		return
+func makeAll(oses ...string) (err error) {
+	for _, os := range oses {
+		astilog.Debugf("Making for %s", os)
+		switch os {
+		case "linux":
+			err = makeLinux()
+		case "windows":
+			err = makeWindows()
+		default:
+			err = fmt.Errorf("making for %s not yet implemented", os)
+		}
+		if err != nil {
+			err = errors.Wrapf(err, "making for %s failed", os)
+			return
+		}
 	}
 	return
 }

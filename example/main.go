@@ -12,7 +12,7 @@ import (
 func main() {
 	// Init logger
 	flag.Parse()
-	astilog.SetLogger(astilog.New(astilog.FlagConfig()))
+	astilog.FlagInit()
 
 	// Build splasher
 	astilog.Debug("Building splasher...")

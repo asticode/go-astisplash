@@ -22,22 +22,26 @@ func New() (s *Splasher, err error) {
 	s = &Splasher{directoryPath: filepath.Join(os.TempDir(), "astisplash")}
 
 	// Remove directory
+	astilog.Debugf("Removing %s", s.directoryPath)
 	if err = os.RemoveAll(s.directoryPath); err != nil {
 		err = errors.Wrapf(err, "removall of %s failed", s.directoryPath)
 		return
 	}
 
 	// Create directory
+	astilog.Debugf("Creating %s", s.directoryPath)
 	if err = os.MkdirAll(s.directoryPath, 0755); err != nil {
 		err = errors.Wrapf(err, "mkdirall of %s failed", s.directoryPath)
 		return
 	}
 
 	// Disembed assets
+	astilog.Debugf("Disembedding to %s", s.directoryPath)
 	if s.binaryPath, err = disembedAssets(s.directoryPath); err != nil {
 		err = errors.Wrap(err, "disembedding assets failed")
 		return
 	}
+	astilog.Debugf("Disembedded to %s", s.binaryPath)
 	return
 }
 
@@ -56,7 +60,7 @@ func (s *Splasher) Splash(src string) (*Splash, error) {
 	return s.splash(exec.Command(s.binaryPath, "-b"+src))
 }
 
-// Splash displays a splash screen at a specific position of the screen
+// splash executes a command and returns a *Splash
 func (s *Splasher) splash(cmd *exec.Cmd) (sp *Splash, err error) {
 	// Exec
 	sp = &Splash{cmd: cmd}
