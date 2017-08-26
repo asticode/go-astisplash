@@ -29,6 +29,7 @@ func main() {
 	// Default oses
 	if len(oses) == 0 {
 		oses = astiflag.Strings{
+			"darwin",
 			"linux",
 			"windows",
 		}
@@ -53,6 +54,8 @@ func makeAll(oses ...string) (err error) {
 	for _, os := range oses {
 		astilog.Debugf("Making for %s", os)
 		switch os {
+		case "darwin":
+			err = makeDarwin()
 		case "linux":
 			err = makeLinux()
 		case "windows":
@@ -68,8 +71,13 @@ func makeAll(oses ...string) (err error) {
 	return
 }
 
+// TemplateData represents template data
+type TemplateData struct {
+	Binary string
+}
+
 // executeTemplate executes a template
-func executeTemplate(data interface{}, templateName, outputPath string) (err error) {
+func executeTemplate(data interface{}, outputPath string) (err error) {
 	// Create output
 	astilog.Debugf("Creating %s", outputPath)
 	var f *os.File
@@ -80,9 +88,9 @@ func executeTemplate(data interface{}, templateName, outputPath string) (err err
 	defer f.Close()
 
 	// Execute template
-	astilog.Debugf("Executing template %s", templateName)
-	if err = t.ExecuteTemplate(f, templateName, data); err != nil {
-		err = errors.Wrapf(err, "executing template %s failed", templateName)
+	astilog.Debug("Executing template")
+	if err = t.ExecuteTemplate(f, "/shared.tmpl", data); err != nil {
+		err = errors.Wrap(err, "executing template failed")
 		return
 	}
 	return

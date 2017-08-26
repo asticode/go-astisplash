@@ -12,22 +12,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DataLinux represents linux template data
-type DataLinux struct {
-	Binary string
-}
-
 // makeLinux makes all proper steps for Linux
 func makeLinux() (err error) {
 	// Build
-	var d DataLinux
+	var d TemplateData
 	if d, err = buildLinux(); err != nil {
 		err = errors.Wrap(err, "building for linux failed")
 		return
 	}
 
 	// Execute template
-	if err = executeTemplate(d, "/linux.tmpl", "./asset_linux.go"); err != nil {
+	if err = executeTemplate(d, "./asset_linux.go"); err != nil {
 		err = errors.Wrap(err, "executing template failed")
 		return
 	}
@@ -35,7 +30,7 @@ func makeLinux() (err error) {
 }
 
 // buildLinux builds the linux binary and returns the linux data
-func buildLinux() (d DataLinux, err error) {
+func buildLinux() (d TemplateData, err error) {
 	// Update args
 	var args = []string{"-o", "./splashmake/tmp/linux", "./splashmake/linux.c"}
 

@@ -12,28 +12,31 @@ import (
 	"github.com/pkg/errors"
 )
 
-// makeWindows makes all proper steps for Windows
-func makeWindows() (err error) {
+// makeDarwin makes all proper steps for Darwin
+func makeDarwin() (err error) {
 	// Build
 	var d TemplateData
-	if d, err = buildWindows(); err != nil {
-		err = errors.Wrap(err, "building for windows failed")
+	if d, err = buildDarwin(); err != nil {
+		err = errors.Wrap(err, "building for darwin failed")
 		return
 	}
 
 	// Execute template
-	if err = executeTemplate(d, "./asset_windows.go"); err != nil {
+	if err = executeTemplate(d, "./asset_darwin.go"); err != nil {
 		err = errors.Wrap(err, "executing template failed")
 		return
 	}
 	return
 }
 
-// buildWindows builds the windows binary and returns the windows data
-func buildWindows() (d TemplateData, err error) {
+// buildDarwin builds the darwin binary and returns the darwin data
+func buildDarwin() (d TemplateData, err error) {
+	// Update args
+	var args = []string{"-o", "./splashmake/tmp/darwin", "-framework", "Cocoa", "./splashmake/darwin.m"}
+
 	// Build
 	astilog.Debug("Building")
-	var cmd = exec.Command("i686-w64-mingw32-gcc", "-o", "./splashmake/tmp/windows", "./splashmake/windows.c")
+	var cmd = exec.Command("gcc", args...)
 	cmd.Env = os.Environ()
 	var b []byte
 	if b, err = cmd.CombinedOutput(); err != nil {
@@ -42,9 +45,9 @@ func buildWindows() (d TemplateData, err error) {
 	}
 
 	// Read file
-	astilog.Debug("Reading linux binary")
-	if b, err = ioutil.ReadFile("./splashmake/tmp/windows"); err != nil {
-		err = errors.Wrap(err, "reading \"./splashmake/tmp/windows\" failed")
+	astilog.Debug("Reading darwin binary")
+	if b, err = ioutil.ReadFile("./splashmake/tmp/darwin"); err != nil {
+		err = errors.Wrap(err, "reading \"./splashmake/tmp/darwin\" failed")
 		return
 	}
 

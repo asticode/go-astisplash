@@ -1,8 +1,5 @@
 #include <gtk/gtk.h>
-#include <stdlib.h>
-
-// Global vars
-char *background;
+#include "shared.c"
 
 // Signal handler
 void signal_handler(int signum)
@@ -21,6 +18,9 @@ static void activate (GtkApplication* app, gpointer user_data)
 
     // Center window
     gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
+
+    // Resize
+    gtk_window_set_default_size (GTK_WINDOW (window), width, height);
 
     // Add title
     gtk_window_set_title (GTK_WINDOW (window), "Splash");
@@ -44,17 +44,7 @@ int main (int argc, char **argv)
     signal(SIGINT, signal_handler);
 
     // Parse flags
-    while ((argc > 1) && (argv[1][0] == '-'))
-    {
-        switch (argv[1][1])
-        {
-            case 'b':
-                background = &argv[1][2];
-                break;
-        }
-        ++argv;
-        --argc;
-    }
+    parseFlags();
 
     // Build application
     GtkApplication *app;
