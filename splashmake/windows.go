@@ -29,7 +29,7 @@ func makeWindows() (err error) {
 	return
 }
 
-// buildWindows builds the windows binary and returns the windows data
+// buildWindows builds the windows binary and returns the template data
 func buildWindows() (d TemplateData, err error) {
 	// Build
 	astilog.Debug("Building")

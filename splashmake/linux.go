@@ -29,7 +29,7 @@ func makeLinux() (err error) {
 	return
 }
 
-// buildLinux builds the linux binary and returns the linux data
+// buildLinux builds the linux binary and returns the template data
 func buildLinux() (d TemplateData, err error) {
 	// Update args
 	var args = []string{"-o", "./splashmake/tmp/linux", "./splashmake/linux.c"}

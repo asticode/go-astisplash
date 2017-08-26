@@ -4,9 +4,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
-
 	"strconv"
+	"strings"
 
 	"github.com/asticode/go-astilog"
 	"github.com/pkg/errors"

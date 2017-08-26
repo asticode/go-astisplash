@@ -44,7 +44,7 @@ int main (int argc, char **argv)
     signal(SIGINT, signal_handler);
 
     // Parse flags
-    parseFlags();
+    parseFlags(argc, argv);
 
     // Build application
     GtkApplication *app;

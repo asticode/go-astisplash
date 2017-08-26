@@ -29,7 +29,7 @@ func makeDarwin() (err error) {
 	return
 }
 
-// buildDarwin builds the darwin binary and returns the darwin data
+// buildDarwin builds the darwin binary and returns the template data
 func buildDarwin() (d TemplateData, err error) {
 	// Update args
 	var args = []string{"-o", "./splashmake/tmp/darwin", "-framework", "Cocoa", "./splashmake/darwin.m"}
