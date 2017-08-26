@@ -15,7 +15,6 @@ import (
 // DataWindows represents windows template data
 type DataWindows struct {
 	Binary string
-	DLL    string
 }
 
 // makeWindows makes all proper steps for Windows
