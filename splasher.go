@@ -13,32 +13,25 @@ import (
 
 // Splasher represents an object capable of displaying splash screens
 type Splasher struct {
-	binaryPath    string
-	directoryPath string
+	binaryPath string
 }
 
 // New creates a new splasher
 func New() (s *Splasher, err error) {
 	// Init
-	s = &Splasher{directoryPath: filepath.Join(os.TempDir(), "astisplash")}
+	s = &Splasher{}
 
-	// Remove directory
-	astilog.Debugf("Removing %s", s.directoryPath)
-	if err = os.RemoveAll(s.directoryPath); err != nil {
-		err = errors.Wrapf(err, "removall of %s failed", s.directoryPath)
+	// Get executable dir path
+	var p string
+	if p, err = os.Executable(); err != nil {
+		err = errors.Wrap(err, "os.Executable failed")
 		return
 	}
-
-	// Create directory
-	astilog.Debugf("Creating %s", s.directoryPath)
-	if err = os.MkdirAll(s.directoryPath, 0755); err != nil {
-		err = errors.Wrapf(err, "mkdirall of %s failed", s.directoryPath)
-		return
-	}
+	p = filepath.Dir(p)
 
 	// Disembed assets
-	astilog.Debugf("Disembedding to %s", s.directoryPath)
-	if s.binaryPath, err = disembedAssets(s.directoryPath); err != nil {
+	astilog.Debugf("Disembedding to %s", p)
+	if s.binaryPath, err = disembedAssets(p); err != nil {
 		err = errors.Wrap(err, "disembedding assets failed")
 		return
 	}
@@ -48,9 +41,10 @@ func New() (s *Splasher, err error) {
 
 // Close closes the Splasher properly
 func (s *Splasher) Close() (err error) {
-	// Remove temp directory
-	if err = os.RemoveAll(s.directoryPath); err != nil {
-		err = errors.Wrapf(err, "removeall of %s failed", s.directoryPath)
+	// Remove binary
+	astilog.Debugf("Removing %s", s.binaryPath)
+	if err = os.Remove(s.binaryPath); err != nil {
+		err = errors.Wrapf(err, "remove of %s failed", s.binaryPath)
 		return
 	}
 	return
