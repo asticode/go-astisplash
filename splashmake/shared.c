@@ -3,7 +3,7 @@ int width, height;
 char *background;
 
 // Parses flags
-void parseFlags(int argc, char **argv) {
+int parseFlags(int argc, char **argv) {
     while ((argc > 1) && (argv[1][0] == '-')) {
         switch (argv[1][1]) {
             case 'b':
@@ -19,4 +19,5 @@ void parseFlags(int argc, char **argv) {
         ++argv;
         --argc;
     }
+    return argc;
 }

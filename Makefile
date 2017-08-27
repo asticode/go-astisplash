@@ -10,5 +10,8 @@ darwin: build
 linux: build
 	/tmp/splashmake -v -os linux
 
+test:
+	go run example/main.go -v
+
 windows: build
 	/tmp/splashmake -v -os windows
