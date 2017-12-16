@@ -1,6 +1,10 @@
 This package provides a way to display a cross-platform splash screen without having to feel the pain of cross compiling.
 
-Indeed, instead of using CGO that would require to install each and every toolchains in order to cross compile, this package relies on executing already cross-compiled binaries that are embedded directly in GO.
+Indeed, instead of using CGO that would require to install each and every tool chains in order to cross compile, this package relies on executing already cross-compiled binaries that are embedded directly in GO.
+
+# Disclaimer
+
+For now it doesn't work on Windows unfortunately :(
 
 # Installation
 
