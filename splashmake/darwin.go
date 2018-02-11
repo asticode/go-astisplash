@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/asticode/go-astilog"
-	"github.com/jteeuwen/go-bindata"
+	"github.com/asticode/go-bindata"
 	"github.com/pkg/errors"
 )
 

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/asticode/go-astilog"
-	"github.com/jteeuwen/go-bindata"
+	"github.com/asticode/go-bindata"
 	"github.com/pkg/errors"
 )
 
@@ -33,7 +33,7 @@ func makeWindows() (err error) {
 func buildWindows() (d TemplateData, err error) {
 	// Build
 	astilog.Debug("Building")
-	var cmd = exec.Command("i686-w64-mingw32-gcc", "-o", "./splashmake/tmp/windows", "./splashmake/windows.c")
+	var cmd = exec.Command("i686-w64-mingw32-gcc", "-mwindows", "-o", "./splashmake/tmp/windows", "./splashmake/windows.c")
 	cmd.Env = os.Environ()
 	var b []byte
 	if b, err = cmd.CombinedOutput(); err != nil {
